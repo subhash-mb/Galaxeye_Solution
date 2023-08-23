@@ -1,0 +1,39 @@
+
+<div class="bg-sky-100 h-screen w-screen flex ">
+  <div class="w-1/2 px-10 py-5">
+    <h1 class="text-center font-bold text-5xl mt-10">
+      GalaxEye Project Solution
+    </h1>
+    <div class="py-20 mx-10">
+      <h4 class="font-bold text-3xl text-blue-500 pb-4 pl-2">Instruction</h4>
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <ul class="list-disc list-inside">
+          <li class="text-lg">Click On Polygon Symbol to select the Area of Interest(AOI)</li>
+          <li class="text-lg">Start Drawing the Triangle, Square, Rectangle etc...</li>
+          <li class="text-lg">Tiles intersecting with the AOI shown on the frontend.</li>
+          <li class="text-lg">Blue Container represents the AOI.</li>
+          <li class="text-lg">Red Container represents the Intersecting Area with AOI.</li>
+          <li class="text-lg">Click On Clear All button to remove everything from the map.</li>
+
+
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="w-1/2 flex flex-col">
+  <div #mapContainer class=" h-4/5 mr-10 ml-0 mt-20 mb-3 shadow-xl border border-blue-700">
+    <!-- Your map content goes here -->
+  </div>
+  <button (click)="clearAll()" class="bg-red-400 hover:bg-red-600 text-white font-semibold w-20 h-10 rounded shadow">
+    Clear All
+   </button>
+  </div>
+
+
+  <!-- <div *ngIf="showInvalidMessage" class="invalid-aoi-message w-1/2 px-10 py-5 text-red-500 text-lg">
+    Note: Please select an Area of Interest within Karnataka.
+  </div> -->
+</div>
+
