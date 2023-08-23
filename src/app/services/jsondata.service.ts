@@ -11,6 +11,7 @@ export class JsondataService {
   geoUrl = environment.geoJsonUrl;
   constructor(private http: HttpClient) { }
 
+  // Make HTTP request get geojson data
   getJSON(): Observable<any> {
     return this.http.get(`${this.geoUrl}`);
   }

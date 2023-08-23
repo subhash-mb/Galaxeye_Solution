@@ -14,7 +14,6 @@ import { JsondataService } from '../services/jsondata.service';
   styleUrls: ['./user-map.component.css'],
 })
 export class UserMapComponent implements OnInit {
-  // @ViewChild('mapContainer') mapContainer!: ElementRef;
 
   @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef;
 
@@ -27,13 +26,14 @@ export class UserMapComponent implements OnInit {
 
 
   constructor(private jsondataService: JsondataService) {}
+
   ngOnInit(): void {
     this.initMap();
-    // this.drawPolygon();
     this.getJSONData();
   }
 
   initMap(): void {
+    // Intial View of the map
     this.map = L.map(this.mapContainer.nativeElement).setView([12.9716, 77.5946], 10 );
 
     // Add tile layer
@@ -61,11 +61,7 @@ export class UserMapComponent implements OnInit {
             color: 'blue',
           },
         },
-        rectangle: {
-          shapeOptions: {
-            color: 'red',
-          },
-        },
+        rectangle: false,
       },
       edit: {
         featureGroup: drawnItems,
@@ -73,26 +69,24 @@ export class UserMapComponent implements OnInit {
     });
     this.map.addControl(drawControl);
 
+    // To get the Coordinates of the Selected AOI
     this.map.on(L.Draw.Event.CREATED, (e: any) => {
       const layer = e.layer;
       drawnItems.addLayer(layer);
       this.geoJSON = layer.toGeoJSON();
       console.log('Selected area coordinates', this.geoJSON);
 
-      //
       this.showInvalidMessage = false;
       this.calculateIntersections(this.geoJSON);
     });
 
-
-
   }
 
+  // To Load the Geojson file from karnataka.geojson file
   getJSONData() {
     this.jsondataService.getJSON().subscribe((data) => {
       this.jsondata = data;
       console.log(' Json data from file : ' + this.jsondata.features);
-
       this.jsondata.features.forEach((obj: any, index: any) => {
         console.log(`Details for object at index ${index}:`);
         console.log('Each object', obj);
@@ -100,48 +94,12 @@ export class UserMapComponent implements OnInit {
     });
   }
 
-
-  // original code
-  // calculateIntersections(selectedData: any) {
-  //   const intersectingTiles = [];
-
-  //   for (const tile of this.jsondata.features) {
-  //     console.log('data from json: ', tile.geometry.coordinates[0]);
-  //     const tilePolygon = turf.polygon([tile.geometry.coordinates[0]]); // Assuming each tile has 'coordinates' property in your JSON
-
-
-  //     const intersection = turf.intersect(selectedData, tilePolygon);
-
-  //     if (intersection) {
-  //       intersectingTiles.push(tile);
-  //     }
-
-  //     if (intersection) {
-  //       // Create a Leaflet polygon layer for the intersecting tile
-  //       const leafletLayer = L.geoJSON(tile.geometry, {
-  //         style: {
-  //           color: 'red', // Customize the color of the intersecting tile
-  //           fillOpacity: 0.4,
-  //         },
-  //       });
-
-  //       // Add the layer to the map and the array
-  //       leafletLayer.addTo(this.map);
-  //       intersectingTiles.push(leafletLayer);
-  //     }
-  //   }
-
-  //   console.log('intersected data: ', intersectingTiles);
-  // }
-
-
-  // Popup try
+  // Calculate Intersection Area using turf Library
   calculateIntersections(selectedData: any) {
     const intersectingTiles = [];
 
     for (const tile of this.jsondata.features) {
       const tilePolygon = turf.polygon([tile.geometry.coordinates[0]]);
-
       const intersection = turf.intersect(selectedData, tilePolygon);
 
       if (intersection) {
@@ -150,7 +108,7 @@ export class UserMapComponent implements OnInit {
         // Create a Leaflet polygon layer for the intersecting tile
         const leafletLayer = L.geoJSON(tile.geometry, {
           style: {
-            color: 'red', // Customize the color of the intersecting tile
+            color: 'red', // Add color of the intersecting tile
             fillOpacity: 0.4,
           },
         });
@@ -161,9 +119,7 @@ export class UserMapComponent implements OnInit {
       }
     }
 
-    console.log('intersected data: ', intersectingTiles);
-
-    // Show a success popup message after intersection calculations are complete
+    // Show a success popup message after intersection calculations are completed.
     const popupMessage = 'Intersection calculations are complete!';
     const mapCenter = this.map.getCenter(); // Get the current map center
     L.popup()
@@ -171,57 +127,6 @@ export class UserMapComponent implements OnInit {
       .setContent(popupMessage)
       .openOn(this.map);
   }
-
-
-
-
-
-
-
-  // Code to check within karnataka or not
-// calculateIntersections(selectedData: any) {
-//   const intersectingTiles = [];
-
-//   /*Convert selectedData to a Turf.js polygon
-//   To check Whether the selected AOI is within Karnataka OR Not */
-//   const selectedPolygon = turf.polygon([selectedData.geometry.coordinates[0]]);
-
-//   let isPolygonInsideGeoJSON = false;
-
-//   for (const feature of this.jsondata.features) {
-//     const tilePolygon = turf.polygon([feature.geometry.coordinates[0]]);
-
-//     // Check if the selected polygon is inside the current GeoJSON tile
-//     if (turf.booleanContains(tilePolygon, selectedPolygon)) {
-//       isPolygonInsideGeoJSON = true;
-
-//       // Perform intersection calculation as before
-//       const intersection = turf.intersect(selectedPolygon, tilePolygon);
-
-//       if (intersection) {
-//         // Create and add Leaflet polygon layer for the intersecting tile
-//         const leafletLayer = L.geoJSON(feature.geometry, {
-//           style: {
-//             color: 'red',
-//             fillOpacity: 0.4,
-//           },
-//         });
-//         leafletLayer.addTo(this.map);
-//         intersectingTiles.push(leafletLayer);
-//         console.log("Intersected Data: ", intersectingTiles);
-//       }
-//     }
-//   }
-
-//   if (!isPolygonInsideGeoJSON) {
-//     // Display error message or perform any action
-//     this.showInvalidMessage = true;
-//     return;
-//   }
-
-// }
-
-
 
 clearAll() {
   // Clear the drawn items layer and the Intersected area
